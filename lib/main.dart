@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 
-void main() => runApp(MyApp());
+import 'src/Pages/LoginPage/LoginMain.dart';
+import 'src/Styles/Colors.dart';
 
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Welcome to Flutter',
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text('Welcome to Flutter'),
-        ),
-        body: Center(
-          child: Text('Hello World'),
-        ),
-      ),
-    );
-  }
+void main() {
+  final page = LoginPage();
+  runApp(MaterialApp(
+    title: 'Garcon',
+    theme: ThemeData(
+        primaryColor: primaryLightBlue,
+        backgroundColor: primaryDarkBlue,
+        fontFamily: 'Poppins'),
+    initialRoute: '/Login',
+    routes: {
+      '/Login': (context) => LoginPage(),
+      '/': (context) => AlertDialog(content: Text('This doesnt exist!'))
+    },
+  ));
 }
