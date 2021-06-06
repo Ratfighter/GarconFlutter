@@ -12,6 +12,6 @@ class LoginResponse{
         clientid = json['clientid'],
         storageid = json['storageid'],
         apiname = json['apiname'],
-        until = json['until'],
-        dayopened = json['dayopened'];
+        until = DateTime.parse(json['until']),
+        dayopened = DateTime.parse(json['dayopened']);
 }
