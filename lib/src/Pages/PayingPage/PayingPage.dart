@@ -1,11 +1,16 @@
+import 'dart:async';
+
 import 'package:Garcon/src/Styles/Colors.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import 'Components/PayingPageBody.dart';
+import 'Components/PayingPageButton.dart';
 
 class PayingPage extends StatelessWidget
 {
+  StreamController<int> cartController;
+  PayingPage(this.cartController);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -14,7 +19,7 @@ class PayingPage extends StatelessWidget
         children: [
           Row(),
           Row(),
-          Row(children: [PayingPageButton()],verticalDirection: VerticalDirection.down)
+          Row(children: [PayingPageButton(cartController)],verticalDirection: VerticalDirection.down)
         ],
       ),
       appBar: AppBar(

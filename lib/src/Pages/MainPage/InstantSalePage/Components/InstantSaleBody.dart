@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:Garcon/src/Controllers/ApiRequestController.dart';
 import 'package:Garcon/src/Models/Responses/ClientProductData.dart';
 import 'package:Garcon/src/Styles/Colors.dart';
@@ -8,17 +10,24 @@ import '../../../../CurrentInstance.dart';
 import 'InstantSaleItemList.dart';
 
 class InstantSaleBody extends StatefulWidget {
+  final StreamController<int> cartController;
+
+  const InstantSaleBody(this.cartController);
+
   @override
-  State<StatefulWidget> createState() => InstantSaleBodyState();
+  State<StatefulWidget> createState() => InstantSaleBodyState(cartController);
 }
 
 class InstantSaleBodyState extends State<InstantSaleBody> {
   late Future<ClientProductData> data;
+  final StreamController<int> cartController;
+
+  InstantSaleBodyState(this.cartController);
 
   @override
   void initState() {
     super.initState();
-    data = requestProducts(CurrentInstance.currentConfiguration!.token);
+    data = ApiRequestController.requestClientObjects(CurrentInstance.currentConfiguration!.token);
   }
 
   @override
@@ -26,40 +35,24 @@ class InstantSaleBodyState extends State<InstantSaleBody> {
     return listProductGroups();
   }
 
-  Column listProductGroups()
-  {
+  Column listProductGroups() {
     return Column(
       children: [
         Expanded(
             flex: 10,
             child: Container(
-              child: FutureBuilder<ClientProductData>(
-                future: data,
-                builder: (context, snapshot) {
-                  if (snapshot.hasError) {
-                    return ListView();
-                  } else if (snapshot.hasData) {
-                    ClientProductData data = snapshot.data!;
-                    return InstantSaleItemList(data);
-                  }
+                child: FutureBuilder<ClientProductData>(
+              future: data,
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
                   return ListView();
-                },
-              )
-            )),
-        Expanded(
-          flex: 1,
-          child: ListTile(
-            onTap: () {
-
-            },
-            tileColor: primaryLightGrey,
-            title: Text('Számla'),
-            trailing: Icon(
-              Icons.shopping_cart_sharp,
-              color: Colors.black,
-            ),
-          )
-        )
+                } else if (snapshot.hasData) {
+                  ClientProductData data = snapshot.data!;
+                  return InstantSaleItemList(data, cartController);
+                }
+                return ListView();
+              },
+            )))
       ],
     );
   }

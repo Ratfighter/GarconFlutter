@@ -13,5 +13,5 @@ class LoginResponse{
         storageid = json['storageid'],
         apiname = json['apiname'],
         until = DateTime.parse(json['until']),
-        dayopened = DateTime.parse(json['dayopened']);
+        dayopened = json['dayopened'] == null ? null : DateTime.parse(json['dayopened']);
 }

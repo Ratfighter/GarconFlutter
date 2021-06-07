@@ -34,7 +34,7 @@ class MainPageState extends State<MainPage> {
           if (!snapshot.hasError) {
             bool isLoggedIn = snapshot.data!;
             if (isLoggedIn) {
-              return InstantSalePage();
+              return InstantSalePage(controller);
             }
           }
           return LoginPage(controller);

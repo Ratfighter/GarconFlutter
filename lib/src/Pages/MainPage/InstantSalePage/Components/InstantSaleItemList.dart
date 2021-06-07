@@ -1,4 +1,6 @@
 
+import 'dart:async';
+
 import 'package:Garcon/src/CurrentInstance.dart';
 import 'package:Garcon/src/Models/DataObjects/ClientProduct.dart';
 import 'package:Garcon/src/Models/DataObjects/ClientProductGroup.dart';
@@ -10,13 +12,14 @@ import 'package:flutter/material.dart';
 class InstantSaleItemList extends StatelessWidget
 {
   final ClientProductData data;
-  const InstantSaleItemList(this.data);
+  final StreamController<int> cartController;
+  const InstantSaleItemList(this.data,this.cartController);
 
   @override
   Widget build(BuildContext context) {
    return ListView(
      children: List.from(
-         data.productGroups.where((element) => data.products.any((x) => x.productGroupId == element.id)).map((product) => InstantSaleProductGroup(product))
+         data.productGroups.where((element) => data.products.any((x) => x.productGroupId == element.id)).map((product) => InstantSaleProductGroup(product,cartController))
      ),
    );
   }
@@ -27,20 +30,37 @@ class InstantSaleItemList extends StatelessWidget
 class InstantSaleProductGroup extends StatelessWidget
 {
   final ClientProductGroup group;
-  InstantSaleProductGroup(this.group);
+  final StreamController<int> cartController;
+  InstantSaleProductGroup(this.group,this.cartController);
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      title: Text(group.name),
-      tileColor: HexColor.fromHex(group.color),
-      onTap: () {
-        List<ClientProduct> productList = CurrentInstance.productList.where((element) => element.productGroupId == group.id).toList();
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context) {
-              return InstantSaleSubItemList(productList);
-            }));
-      },
+    return Container(
+      decoration: BoxDecoration(
+        border: Border(
+          left: BorderSide(
+            color: HexColor.fromHex(group.color),
+            width: 12
+          ),
+          top: BorderSide(
+            color: Colors.black12
+          ),
+          bottom: BorderSide(
+              color: Colors.black12,
+          )
+        )
+      ),
+      child: ListTile(
+        title: Text(group.name),
+        tileColor: primaryLightGrey,
+        onTap: () {
+          List<ClientProduct> productList = CurrentInstance.productList.where((element) => element.productGroupId == group.id).toList();
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) {
+                return InstantSaleSubItemList(productList, group, cartController);
+              }));
+        },
+      )
     );
   }
 }
