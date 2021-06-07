@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:Garcon/src/Controllers/ApiRequestController.dart';
+import 'package:Garcon/src/CurrentInstance.dart';
 import 'package:Garcon/src/Models/Entities/Config.dart';
 import 'package:Garcon/src/Models/Requests/LoginRequest.dart';
 import 'package:Garcon/src/Models/Responses/LoginResponse.dart';
@@ -56,11 +57,13 @@ class LoginButton extends StatelessWidget {
           //Route az instant sale page-re
           var json = jsonDecode(response.body);
           var obj = LoginResponse.fromJson(json);
+          var config = new Config(obj.token, obj.clientid, obj.until, obj.dayopened,
+              obj.apiname, obj.storageid, tenant, client);
           var box = Hive.box<Config>('Config');
           box.put(
               'config',
-              new Config(obj.token, obj.clientid, obj.until, obj.dayopened,
-                  obj.apiname, obj.storageid, tenant, client));
+              config);
+          CurrentInstance.currentConfiguration = config;
           loginController.add(true);
           return;
         case 400:
