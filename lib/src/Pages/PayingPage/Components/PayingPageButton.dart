@@ -12,65 +12,55 @@ import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
 class PayingPageButton extends StatelessWidget {
-  StreamController<int> cartController;
-  PayingPageButton(this.cartController);
+  final void Function() func;
+  final bool canPay;
+  PayingPageButton(this.func, this.canPay);
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      flex: 1,
-      child: Padding(
-        padding: const EdgeInsets.only(top: 10, bottom: 10),
-        child: ElevatedButton(
-            child: Text(
-              'Fizetés',
-              style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 24,
-                  fontWeight: FontWeight.normal),
-            ),
-            style: ButtonStyle(
-                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                    RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                        side: BorderSide(color: primaryDarkBlue))),
-                foregroundColor:
-                    MaterialStateProperty.all<Color>(primaryLightBlue)),
-            onPressed: () async => startPayment(context)
-        ),
-      ),
+    double cost = 0.0;
+    CurrentInstance.cartList.forEach((element) {
+      var saleprice = element.quantity*element.originalUnitPrice*(1-(element.discountPercentage/100));
+      cost += saleprice;
+    });
+    return Padding(
+      padding: const EdgeInsets.only(top: 5, bottom: 5),
+      child: ElevatedButton(
+          child: Text(
+            canPay ? '$cost Ft Fizetése' : 'Fizetés nem elérhető',
+            style: TextStyle(
+                color: Colors.black,
+                fontSize: 24,
+                fontWeight: FontWeight.normal),
+          ),
+          style: ButtonStyle(
+              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                  RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                      side: BorderSide(color: primaryDarkBlue))),
+              foregroundColor:
+                  MaterialStateProperty.all<Color>(primaryLightBlue)),
+          onPressed: canPay ? () async => startPayment(context) : null),
     );
   }
 
-  Future<void> startPayment(BuildContext context) async
-  {
+  Future<void> startPayment(BuildContext context) async {
     var cart = CurrentInstance.cartList;
-    if(cart.isEmpty)
-    {
-      showDialog(context: context, builder: (builder){
-        return AlertDialog(
-          content: Text('Nincs termék a kosárban!'),
-        );
-      });
-      return;
-    }
     var config = CurrentInstance.currentConfiguration!;
     var paymentList = List<EHPaymentItem>.empty(growable: true);
     var productList = List<SaleProduct>.empty(growable: true);
     var cost = 0.0;
     cart.forEach((element) {
-
-      var salePrice = element.originalUnitPrice *
-          (1 - (element.discountPercentage / 100));
-      cost += salePrice;
+      var salePrice = element.originalUnitPrice * (1 - (element.discountPercentage / 100));
+      cost += salePrice * element.quantity;
       var vatValue = salePrice * (element.vatPercentage / 100);
       productList.add(new SaleProduct(
           null,
           null,
           element.productID,
           element.quantity,
-          element.originalUnitPrice,
           salePrice,
+          element.originalUnitPrice,
           element.vatPercentage,
           vatValue,
           element.discountPercentage));
@@ -89,24 +79,21 @@ class PayingPageButton extends StatelessWidget {
         "",
         "",
         "");
-    PublishData pubdata = new PublishData(
-        data,
-        PublishDataType.InstantSale,
-        config.TenantName,
-        config.storageID,
-        config.clientID,
-        3);
+    var type = PublishDataType.InstantSale;
+    PublishData pubdata = new PublishData(data, type, config.TenantName, config.clientID, config.storageID, 3);
     var success = await sendInstantSale(pubdata);
     if (success) {
       CurrentInstance.cartList.clear();
-      cartController.add(0);
+      func.call();
       Navigator.pop(context);
     } else {
-      showDialog(context: context, builder: (builder){
-        return AlertDialog(
-          content: Text('Fizetés sikertelen!'),
-        );
-      });
+      showDialog(
+          context: context,
+          builder: (builder) {
+            return AlertDialog(
+              content: Text('Fizetés sikertelen!'),
+            );
+          });
     }
   }
 }

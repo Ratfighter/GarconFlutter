@@ -19,7 +19,7 @@ class InstantSaleItemList extends StatelessWidget
   Widget build(BuildContext context) {
    return ListView(
      children: List.from(
-         data.productGroups.where((element) => data.products.any((x) => x.productGroupId == element.id)).map((product) => InstantSaleProductGroup(product,cartController))
+         data.productGroups.where((element) => data.products.any((x) => x.productGroupId == element.id)).map((product) => InstantSaleProductGroup(product, cartController))
      ),
    );
   }
@@ -35,6 +35,7 @@ class InstantSaleProductGroup extends StatelessWidget
 
   @override
   Widget build(BuildContext context) {
+    var elementCount = CurrentInstance.productList.where((element) => element.productGroupId == group.id).length;
     return Container(
       decoration: BoxDecoration(
         border: Border(
@@ -52,6 +53,7 @@ class InstantSaleProductGroup extends StatelessWidget
       ),
       child: ListTile(
         title: Text(group.name),
+        subtitle: Text('Termékek: $elementCount'),
         tileColor: primaryLightGrey,
         onTap: () {
           List<ClientProduct> productList = CurrentInstance.productList.where((element) => element.productGroupId == group.id).toList();

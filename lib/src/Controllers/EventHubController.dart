@@ -4,7 +4,6 @@ import 'package:Garcon/src/Controllers/ApiRequestController.dart';
 import 'package:Garcon/src/CurrentInstance.dart';
 import 'package:Garcon/src/Models/EventHub/PublishData.dart';
 
-//const String EventHUBURL = 'https://prod-evh-namespace-minibizz.servicebus.windows.net/prod-evh-minibizz/messages';
 const String EventHUBURL = 'https://prod-app-minibizz-api-01.azurewebsites.net/Queue/Add';
 
 Future<bool> sendInstantSale(PublishData data) async

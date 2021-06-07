@@ -22,7 +22,7 @@ class InstantSalePage extends StatefulWidget {
 }
 
 class InstantSalePageState extends State<InstantSalePage> {
-  final StreamController<int> cartController = new StreamController<int>();
+  final StreamController<int> cartController = new StreamController<int>.broadcast();
   final StreamController<bool> loginController;
 
   InstantSalePageState(this.loginController);
@@ -37,7 +37,8 @@ class InstantSalePageState extends State<InstantSalePage> {
   @override
   void initState() {
     super.initState();
-    cartController.stream.listen((value) {
+    var stream = cartController.stream.asBroadcastStream();
+    stream.listen((value) {
       setState(() {
         productCount = value;
       });

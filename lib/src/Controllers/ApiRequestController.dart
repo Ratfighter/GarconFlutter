@@ -24,27 +24,16 @@ class ApiRequestController{
   static Future<ClientProductData> requestClientObjects(String jwt) async {
     var prods = await requestProductList(jwt);
     var groups = await requestProductGroups(jwt);
-    var sas = await requestSaSToken(jwt);
-    if (prods.statusCode == 200 && groups.statusCode == 200 && sas.statusCode == 200) {
+    if (prods.statusCode == 200 && groups.statusCode == 200) {
       Iterable iter1 = jsonDecode(prods.body);
       Iterable iter2 = jsonDecode(groups.body);
       CurrentInstance.productList = List<ClientProduct>.from(iter1.map((e) => ClientProduct.fromJson(e)));
       CurrentInstance.productGroupsList = List<ClientProductGroup>.from(iter2.map((e) => ClientProductGroup.fromJson(e)));
-      CurrentInstance.sasToken = jsonDecode(sas.body);
       ClientProductData data = new ClientProductData(CurrentInstance.productGroupsList, CurrentInstance.productList);
       return data;
     } else {
       throw Exception("Request Failed");
     }
-  }
-
-  static Future<http.Response> requestSaSToken(String jwt) async {
-    var result = await client.get(Uri.parse('$apiurl/EH/CreateToken'),
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-          'ClientAuthorization': '$jwt'
-        });
-    return result;
   }
 
   static Future<http.Response> requestProductList(String jwt) async {

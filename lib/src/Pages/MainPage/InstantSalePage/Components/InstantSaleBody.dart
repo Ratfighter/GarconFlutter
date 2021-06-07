@@ -9,10 +9,11 @@ import 'package:flutter/material.dart';
 import '../../../../CurrentInstance.dart';
 import 'InstantSaleItemList.dart';
 
+// ignore: must_be_immutable
 class InstantSaleBody extends StatefulWidget {
   final StreamController<int> cartController;
 
-  const InstantSaleBody(this.cartController);
+  InstantSaleBody(this.cartController);
 
   @override
   State<StatefulWidget> createState() => InstantSaleBodyState(cartController);

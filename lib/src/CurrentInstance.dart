@@ -8,7 +8,6 @@ import 'Models/Entities/Settings.dart';
 class CurrentInstance{
   static Settings currentSettings = new Settings(false, false, true, false, 50);
   static Config? currentConfiguration;
-  static String? sasToken;
   static List<ClientProductGroup> productGroupsList = List.empty();
   static List<ClientProduct> productList = List.empty();
   static List<CartProduct> cartList = List.empty(growable: true);

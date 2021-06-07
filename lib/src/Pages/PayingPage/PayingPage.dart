@@ -4,6 +4,7 @@ import 'package:Garcon/src/Styles/Colors.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import 'Components/PayingPageBody.dart';
 import 'Components/PayingPageButton.dart';
 
 class PayingPage extends StatelessWidget
@@ -14,21 +15,14 @@ class PayingPage extends StatelessWidget
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          Row(),
-          Row(),
-          Row(children: [PayingPageButton(cartController)],verticalDirection: VerticalDirection.down)
-        ],
-      ),
+      body: Container(child: PayingPageBody(cartController)),
       appBar: AppBar(
         backgroundColor: primaryDarkBlue,
         iconTheme: IconThemeData(
             color: primaryLightBlue
         ),
         title: Text(
-          'Beállítások',
+          'Kosár',
           style: TextStyle(
               color: primaryLightBlue,
               fontSize: 35,
